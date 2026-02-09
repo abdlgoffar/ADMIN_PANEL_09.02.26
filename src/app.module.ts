@@ -1,3 +1,4 @@
+import { PostModule } from './modules/posts/post.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +12,7 @@ import { PostController } from './modules/posts/post.controller';
 
 @Module({
   imports: [
+    PostModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -22,7 +24,7 @@ import { PostController } from './modules/posts/post.controller';
       username: 'root',
       password: '',
       database: 'admin_panel_db',
-      entities: [User],
+      entities: [__dirname + '/modules/**/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
 
