@@ -6,7 +6,6 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
 import { AuthModule } from './modules/auth/auth.module';
-import { User } from './modules/users/user.entity';
 import { UsersModule } from './modules/users/user.module';
 import { PostController } from './modules/posts/post.controller';
 
@@ -25,7 +24,8 @@ import { PostController } from './modules/posts/post.controller';
       password: '',
       database: 'admin_panel_db',
       entities: [__dirname + '/modules/**/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      migrations: ['dist/migrations/*.js'],
+      synchronize: false,
     }),
 
     ThrottlerModule.forRoot({
