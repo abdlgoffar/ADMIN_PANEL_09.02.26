@@ -23,7 +23,7 @@ export class AuthService {
   async register(dto: RegisterDto) {
     const existingUser = await this.usersService.findByUsername(dto.username);
     if (existingUser) {
-      throw new BadRequestException(['Username already exists']);
+      throw new BadRequestException('Username already exists');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -40,7 +40,7 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException(['Invalid credentials']);
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const tokens = await this.generateTokens(user);
@@ -87,13 +87,13 @@ export class AuthService {
     const user = await this.usersService.findById(userId);
 
     if (!user || !user.hashedRefreshToken) {
-      throw new ForbiddenException(['Invalid credential']);
+      throw new ForbiddenException('Invalid credential');
     }
 
     const isValid = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
 
     if (!isValid) {
-      throw new ForbiddenException(['Invalid refresh token']);
+      throw new ForbiddenException('Invalid refresh token');
     }
 
     const tokens = await this.generateTokens(user);
@@ -108,5 +108,9 @@ export class AuthService {
     await this.usersService.update(userId, { hashedRefreshToken: null });
 
     return { message: 'Logout successful' };
+  }
+
+  decodeAccessToken(token: string) {
+    return this.jwt.decode(token) as any;
   }
 }

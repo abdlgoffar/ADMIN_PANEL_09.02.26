@@ -10,9 +10,9 @@ import { Post } from './post.entity';
 import { PostImage } from './post-image.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { v4 as uuid } from 'uuid';
-import { s3 } from 'src/configs/aws.config';
 import { QueryPostDto } from './dto/query-post.dto';
 import { UserRole } from '../users/user-role.enum';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class PostService {
@@ -20,6 +20,15 @@ export class PostService {
     @InjectRepository(Post) private postRepo: Repository<Post>,
     @InjectRepository(PostImage) private postImageRepo: Repository<PostImage>,
   ) {}
+
+  // pastikan s3 client sudah dibuat
+  s3 = new S3Client({
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+    region: process.env.AWS_REGION,
+  });
 
   async createWithImages(
     createPostDto: CreatePostDto,
@@ -29,10 +38,7 @@ export class PostService {
     let post: Post;
 
     try {
-      post = this.postRepo.create({
-        ...createPostDto,
-        user_id: userId,
-      });
+      post = this.postRepo.create({ ...createPostDto, user_id: userId });
       await this.postRepo.save(post);
     } catch (err) {
       console.error('Gagal menyimpan post', err);
@@ -42,15 +48,9 @@ export class PostService {
     }
 
     if (files && files.length > 0) {
+      const bucketName = process.env.AWS_BUCKET_NAME!;
       const uploadPromises = files.map(async (file) => {
         const savedName = `${uuid()}-${file.originalname}`;
-
-        const bucketName = process.env.AWS_BUCKET_NAME;
-        if (!bucketName) {
-          throw new InternalServerErrorException(
-            'AWS_BUCKET_NAME tidak dikonfigurasi',
-          );
-        }
 
         const params = {
           Bucket: bucketName,
@@ -59,9 +59,18 @@ export class PostService {
           ContentType: file.mimetype,
         };
 
-        let uploaded;
         try {
-          uploaded = await s3.upload(params).promise();
+          await this.s3.send(new PutObjectCommand(params));
+
+          // buat URL manual
+          const fileUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${savedName}`;
+
+          return this.postImageRepo.create({
+            original_name: file.originalname,
+            saved_name: savedName,
+            url: fileUrl,
+            post_id: post.id,
+          });
         } catch (err) {
           console.error(
             `Gagal upload file ${file.originalname} ke AWS S3`,
@@ -71,13 +80,6 @@ export class PostService {
             `Gagal upload file ${file.originalname} ke AWS S3`,
           );
         }
-
-        return this.postImageRepo.create({
-          original_name: file.originalname,
-          saved_name: savedName,
-          url: uploaded.Location,
-          post_id: post.id,
-        });
       });
 
       try {

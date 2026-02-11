@@ -15,7 +15,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super({
       jwtFromRequest: (req: Request) => {
         if (!req?.cookies?.refresh_token) {
-          throw new UnauthorizedException(['No refresh token']);
+          throw new UnauthorizedException('No refresh token');
         }
         return req.cookies.refresh_token;
       },

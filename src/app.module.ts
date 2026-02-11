@@ -1,3 +1,5 @@
+import { AdminViewController } from './modules/users/admin-view.controller';
+import { UserViewController } from './modules/users/user-view.controller';
 import { PostModule } from './modules/posts/post.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/user.module';
 import { PostController } from './modules/posts/post.controller';
+import { AuthWebViewController } from './modules/auth/auth-web-view.controller';
 
 @Module({
   imports: [
@@ -53,6 +56,11 @@ import { PostController } from './modules/posts/post.controller';
     },
   ],
 
-  controllers: [PostController],
+  controllers: [
+    AuthWebViewController,
+    AdminViewController,
+    UserViewController,
+    PostController,
+  ],
 })
 export class AppModule {}
