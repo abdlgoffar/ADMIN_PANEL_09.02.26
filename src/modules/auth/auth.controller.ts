@@ -19,7 +19,7 @@ import type { Response as ExpressResponse } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { RegisterDto } from './dto/register.dto';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

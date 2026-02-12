@@ -19,11 +19,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/guards/roles.decorator';
-import { UserRole } from '../users/user-role.enum';
+import { UserRole } from '../users/entity/user-role.enum';
 import { UpdatePostDto } from './dto/upadate-post.dto';
 import { QueryPostDto } from './dto/query-post.dto';
 
-@Controller('posts')
+@Controller('api/posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 

@@ -6,6 +6,8 @@ import { Body, Controller, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Response } from 'express';
+import { RegisterDto } from './dto/register.dto';
+import { UserRole } from '../users/entity/user-role.enum';
 
 @Controller('web-auth')
 export class AuthWebController {
@@ -19,9 +21,7 @@ export class AuthWebController {
       httpOnly: true,
       path: '/',
     });
-
     const payload = this.authService.decodeAccessToken(tokens.accessToken);
-
     if (payload.role.toLowerCase() === 'admin') {
       return res.redirect('/admin');
     }
@@ -33,5 +33,18 @@ export class AuthWebController {
   logout(@Res() res: Response) {
     res.clearCookie('web_token', { path: '/' });
     return res.redirect('/');
+  }
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto, @Res() res: Response) {
+    try {
+      if (!dto.role) dto.role = UserRole.USER;
+
+      await this.authService.register(dto);
+
+      return res.redirect('/auth/login');
+    } catch (err: any) {
+      return res.status(400).send(err.message);
+    }
   }
 }

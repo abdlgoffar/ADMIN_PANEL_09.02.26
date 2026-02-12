@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import { User } from '../users/user.entity';
+import { User } from '../users/entity/user.entity';
 import { UsersService } from '../users/user.service';
 import { RegisterDto } from './dto/register.dto';
 
@@ -27,13 +27,23 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
+
     const user = await this.usersService.create({
       username: dto.username,
       password: hashedPassword,
       role: dto.role,
+
+      profile: {
+        full_name: dto.full_name,
+        date_of_birth: new Date(dto.date_of_birth),
+        gender: dto.gender,
+      },
     });
 
-    return { message: 'User registered successfully', userId: user.id };
+    return {
+      message: 'User registered successfully',
+      userId: user.id,
+    };
   }
 
   async login(username: string, password: string) {

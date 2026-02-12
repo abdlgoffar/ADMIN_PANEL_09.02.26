@@ -1,6 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { UserRole } from './user-role.enum';
-import { Post } from '../posts/post.entity';
+import { UserProfile } from './user-profile.entity';
+import { Post } from 'src/modules/posts/entity/post.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,4 +31,9 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
+
+  @OneToOne(() => UserProfile, (profile) => profile.user, {
+    cascade: true,
+  })
+  profile: UserProfile;
 }

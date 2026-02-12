@@ -1,5 +1,6 @@
-import { AdminViewController } from './modules/users/admin-view.controller';
-import { UserViewController } from './modules/users/user-view.controller';
+import { UserWebController } from './modules/users/user-web.controller';
+import { AdminWebViewController } from './modules/users/admin-web-view.controller';
+import { UserWebViewController } from './modules/users/user-web-view.controller';
 import { PostModule } from './modules/posts/post.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -11,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/user.module';
 import { PostController } from './modules/posts/post.controller';
 import { AuthWebViewController } from './modules/auth/auth-web-view.controller';
+import { UserController } from './modules/users/user.controller';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { AuthWebViewController } from './modules/auth/auth-web-view.controller';
       database: 'admin_panel_db',
       entities: [__dirname + '/modules/**/**/*.entity{.ts,.js}'],
       migrations: ['dist/migrations/*.js'],
-      synchronize: false,
+      synchronize: true,
     }),
 
     ThrottlerModule.forRoot({
@@ -57,10 +59,12 @@ import { AuthWebViewController } from './modules/auth/auth-web-view.controller';
   ],
 
   controllers: [
+    UserWebController,
     AuthWebViewController,
-    AdminViewController,
-    UserViewController,
+    AdminWebViewController,
+    UserWebViewController,
     PostController,
+    UserController,
   ],
 })
 export class AppModule {}

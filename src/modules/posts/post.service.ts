@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Post } from './post.entity';
-import { PostImage } from './post-image.entity';
+import { PostImage } from './entity/post-image.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { v4 as uuid } from 'uuid';
 import { QueryPostDto } from './dto/query-post.dto';
-import { UserRole } from '../users/user-role.enum';
+import { UserRole } from '../users/entity/user-role.enum';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { Post } from './entity/post.entity';
 
 @Injectable()
 export class PostService {
@@ -21,7 +21,6 @@ export class PostService {
     @InjectRepository(PostImage) private postImageRepo: Repository<PostImage>,
   ) {}
 
-  // pastikan s3 client sudah dibuat
   s3 = new S3Client({
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,

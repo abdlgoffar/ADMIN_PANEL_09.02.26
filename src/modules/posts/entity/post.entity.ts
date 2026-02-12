@@ -1,3 +1,4 @@
+import { User } from 'src/modules/users/entity/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,7 +10,6 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { User } from '../users/user.entity';
 import { PostImage } from './post-image.entity';
 
 @Entity('posts')

@@ -1,5 +1,13 @@
-import { IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
-import { UserRole } from 'src/modules/users/user-role.enum';
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { UserGender } from 'src/modules/users/entity/user-gender.enum';
+import { UserRole } from 'src/modules/users/entity/user-role.enum';
 
 export class RegisterDto {
   @IsString()
@@ -13,5 +21,18 @@ export class RegisterDto {
   password: string;
 
   @IsEnum(UserRole)
+  @IsOptional()
   role: UserRole;
+
+  @IsString()
+  @MinLength(3)
+  @MaxLength(100)
+  full_name: string;
+
+  //Date of Birth (format: YYYY-MM-DD)
+  @IsDateString()
+  date_of_birth: string;
+
+  @IsEnum(UserGender)
+  gender: UserGender;
 }
