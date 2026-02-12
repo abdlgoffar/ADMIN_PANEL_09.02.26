@@ -116,7 +116,7 @@ export class PostService {
           user_id: userId,
           is_deleted: false,
         },
-        relations: ['user', 'images'],
+        relations: ['user', 'user.profile', 'images'],
         order: { created_at: 'DESC' },
         take: limit,
         skip: offset,
@@ -131,7 +131,7 @@ export class PostService {
     try {
       return await this.postRepo.find({
         where: { is_deleted: false },
-        relations: ['user', 'images'],
+        relations: ['user', 'user.profile', 'images'],
         order: { created_at: 'DESC' },
       });
     } catch (err) {
@@ -160,6 +160,21 @@ export class PostService {
       console.error('Gagal hapus post', err);
       throw new InternalServerErrorException('Gagal menghapus post');
     }
+  }
+
+  async removeWeb(id: number, userId: number) {
+    const post = await this.postRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!post || post.user.id !== userId) {
+      throw new ForbiddenException('Tidak bisa menghapus post ini');
+    }
+
+    await this.postRepo.update(id, { is_deleted: true });
+
+    return { deleted: true };
   }
 
   async updateParagraph(

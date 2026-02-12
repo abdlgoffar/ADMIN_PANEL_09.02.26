@@ -12,12 +12,16 @@ import { WebAuthGuard } from '../auth/guards/web-auth.guard';
 import type { Request } from 'express';
 
 import { UsersService } from './user.service';
+import { PostService } from '../posts/post.service';
 
 @Controller('user')
 @UseGuards(WebAuthGuard, RolesGuard)
 @Roles(UserRole.USER)
 export class UserWebViewController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly postService: PostService,
+  ) {}
 
   @Get()
   @Render('layouts/user')
@@ -25,12 +29,16 @@ export class UserWebViewController {
     const userId = (req as any).user.id;
 
     const user = await this.usersService.findUserWithProfile(userId);
+    const otherPost = await this.postService.findAllOtherPost();
+    const myPost = await this.postService.findAllMyPost(userId);
 
     return {
       title: 'User Dashboard',
       body: 'user/main',
       user,
       profile: user?.profile,
+      otherPost,
+      myPost,
     };
   }
 }

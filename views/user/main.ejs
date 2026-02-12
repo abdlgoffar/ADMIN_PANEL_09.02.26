@@ -123,12 +123,12 @@
                   <ul class="nav nav-pills">
                     <li class="nav-item">
                       <a class="nav-link active" href="#activity" data-toggle="tab">
-                        Feed / Aktivitas
+                        Aktivitas & Social Feed
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="#posts" data-toggle="tab">
-                        Postingan
+                        Postingan Saya
                       </a>
                     </li>
                     <li class="nav-item">
@@ -144,47 +144,296 @@
 
                     <!-- Activity -->
                     <div class="active tab-pane" id="activity">
-                      <div class="alert alert-info">
-                        Belum ada aktivitas terbaru.
-                      </div>
+
+
+                      <% if (otherPost && otherPost.length> 0) { %>
+
+                        <% otherPost.forEach(post=> { %>
+
+                          <div class="card card-widget mb-3">
+
+                            <!-- HEADER -->
+                            <div class="card-header">
+                              <div class="user-block">
+                                <img class="img-circle"
+                                  src="<%= post.user.profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
+                                  alt="User Image">
+
+                                <span class="username">
+                                  <a href="#">
+                                    <%= post.user?.profile?.full_name || 'No Name' %>
+                                  </a>
+                                </span>
+
+                                <span class="description time-ago" data-time="<%= post.created_at %>">
+                                </span>
+                              </div>
+                            </div>
+
+                            <!-- BODY -->
+                            <div class="card-body">
+
+                              <% if (post.paragraph) { %>
+                                <p>
+                                  <%= post.paragraph %>
+                                </p>
+                                <% } %>
+
+                                  <% if (post.images && post.images.length> 0) { %>
+
+                                    <% if (post.images.length> 4) { %>
+
+                                      <!-- CAROUSEL -->
+                                      <div id="carousel-<%= post.id %>" class="carousel slide mb-3"
+                                        data-ride="carousel">
+
+                                        <div class="carousel-inner">
+                                          <% post.images.forEach((image, index)=> { %>
+                                            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                              <img class="d-block w-100 preview-image"
+                                                style="max-height:500px; object-fit:cover;" src="<%= image.url %>">
+                                            </div>
+                                            <% }) %>
+                                        </div>
+
+                                        <a class="carousel-control-prev" href="#carousel-<%= post.id %>"
+                                          data-slide="prev">
+                                          <span class="carousel-control-prev-icon"></span>
+                                        </a>
+
+                                        <a class="carousel-control-next" href="#carousel-<%= post.id %>"
+                                          data-slide="next">
+                                          <span class="carousel-control-next-icon"></span>
+                                        </a>
+
+                                      </div>
+
+                                      <% } else if (post.images.length===1) { %>
+
+                                        <!-- SINGLE IMAGE -->
+                                        <img class="img-fluid rounded mb-2 preview-image"
+                                          src="<%= post.images[0].url %>">
+
+                                        <% } else { %>
+
+                                          <!-- GRID 2-4 IMAGE -->
+                                          <div class="row">
+                                            <% post.images.forEach(image=> { %>
+                                              <div class="col-6 col-md-4 mb-2">
+                                                <img class="img-fluid rounded preview-image"
+                                                  style="height:200px; object-fit:cover; width:100%;"
+                                                  src="<%= image.url %>">
+                                              </div>
+                                              <% }) %>
+                                          </div>
+
+                                          <% } %>
+
+                                            <% } %>
+
+                                              <hr>
+
+                                              <div class="d-flex justify-content-between align-items-center">
+
+                                                <!-- LEFT SIDE -->
+                                                <div>
+                                                  <button class="btn btn-default btn-sm">
+                                                    <i class="far fa-thumbs-up"></i> Like
+                                                  </button>
+
+                                                  <button class="btn btn-default btn-sm">
+                                                    <i class="far fa-comment"></i> Comment
+                                                  </button>
+                                                </div>
+
+                                                <!-- RIGHT SIDE -->
+                                                <div>
+                                                  <form method="POST"
+                                                    onsubmit="return confirm('Yakin ingin menghapus postingan ini?')">
+
+                                                    <button class="btn btn-default btn-sm">
+                                                      <i class="fas fa-share"></i> Share
+                                                    </button>
+
+                                                  </form>
+                                                </div>
+
+                                              </div>
+                            </div>
+                          </div>
+
+                          <% }) %>
+
+                            <% } else { %>
+
+                              <div class="alert alert-info">
+                                Medsos belum memiliki aktivitas sama sekali.
+                              </div <% } %>
+
+
+
+
+
                     </div>
 
                     <!-- Post -->
                     <div class="tab-pane" id="posts">
-                      <div class="card card-outline card-secondary">
-                        <div class="card-body">
 
-                          <div class="d-flex align-items-center mb-3">
 
-                            <!-- Avatar -->
-                            <img
-                              src="<%= profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
-                              class="img-circle" width="40" height="40" />
+                      <div class="d-flex align-items-center mb-3">
 
-                            <!-- Input -->
-                            <input type="text" class="form-control ml-2"
-                              placeholder="Apa yang Anda pikirkan hari ini?" />
+                        <!-- Avatar -->
+                        <img src="<%= profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
+                          class="img-circle" width="40" height="40" />
 
-                            <!-- Add Button -->
-                            <button class="btn btn-primary ml-2" type="button">
-                              <i class="fas fa-plus"></i>
-                            </button>
+                        <!-- Input -->
+                        <input type="text" class="form-control ml-2" placeholder="Apa yang Anda pikirkan hari ini?" />
 
-                          </div>
+                        <!-- Add Button -->
+                        <button class="btn btn-primary ml-2" type="button">
+                          <i class="fas fa-plus"></i>
+                        </button>
 
-                          <div class="text-muted text-center">
-                            Belum ada postingan.
-                          </div>
-
-                        </div>
                       </div>
+
+
+                      <% if (myPost && myPost.length> 0) { %>
+
+                        <% myPost.forEach(post=> { %>
+
+                          <div class="card card-widget mb-3">
+
+                            <!-- HEADER -->
+                            <div class="card-header">
+                              <div class="user-block">
+                                <img class="img-circle"
+                                  src="<%= post.user.profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
+                                  alt="User Image">
+
+                                <span class="username">
+                                  <a href="#">
+                                    <%= post.user?.profile?.full_name || 'No Name' %>
+                                  </a>
+                                </span>
+
+                                <span class="description time-ago" data-time="<%= post.created_at %>">
+                                </span>
+                              </div>
+                            </div>
+
+                            <!-- BODY -->
+                            <div class="card-body">
+
+                              <% if (post.paragraph) { %>
+                                <p>
+                                  <%= post.paragraph %>
+                                </p>
+                                <% } %>
+
+                                  <% if (post.images && post.images.length> 0) { %>
+
+                                    <% if (post.images.length> 4) { %>
+
+                                      <!-- CAROUSEL -->
+                                      <div id="carousel-<%= post.id %>" class="carousel slide mb-3"
+                                        data-ride="carousel">
+
+                                        <div class="carousel-inner">
+                                          <% post.images.forEach((image, index)=> { %>
+                                            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                              <img class="d-block w-100 preview-image"
+                                                style="max-height:500px; object-fit:cover;" src="<%= image.url %>">
+                                            </div>
+                                            <% }) %>
+                                        </div>
+
+                                        <a class="carousel-control-prev" href="#carousel-<%= post.id %>"
+                                          data-slide="prev">
+                                          <span class="carousel-control-prev-icon"></span>
+                                        </a>
+
+                                        <a class="carousel-control-next" href="#carousel-<%= post.id %>"
+                                          data-slide="next">
+                                          <span class="carousel-control-next-icon"></span>
+                                        </a>
+
+                                      </div>
+
+                                      <% } else if (post.images.length===1) { %>
+
+                                        <!-- SINGLE IMAGE -->
+                                        <img class="img-fluid rounded mb-2 preview-image"
+                                          src="<%= post.images[0].url %>">
+
+                                        <% } else { %>
+
+                                          <!-- GRID 2-4 IMAGE -->
+                                          <div class="row">
+                                            <% post.images.forEach(image=> { %>
+                                              <div class="col-6 col-md-4 mb-2">
+                                                <img class="img-fluid rounded preview-image"
+                                                  style="height:200px; object-fit:cover; width:100%;"
+                                                  src="<%= image.url %>">
+                                              </div>
+                                              <% }) %>
+                                          </div>
+
+                                          <% } %>
+
+                                            <% } %>
+
+                                              <hr>
+
+                                              <div class="d-flex justify-content-between align-items-center">
+
+                                                <!-- LEFT SIDE -->
+                                                <div>
+                                                  <button class="btn btn-default btn-sm">
+                                                    <i class="far fa-thumbs-up"></i> Like
+                                                  </button>
+
+                                                  <button class="btn btn-default btn-sm">
+                                                    <i class="far fa-comment"></i> Comment
+                                                  </button>
+                                                </div>
+
+                                                <!-- RIGHT SIDE -->
+                                                <div>
+                                                  <form action="/web-user/delete-post/<%= post.id %>" method="POST"
+                                                    onsubmit="return confirm('Yakin ingin menghapus postingan ini?')">
+
+                                                    <button class="btn btn-danger btn-sm">
+                                                      <i class="fas fa-trash"></i> Hapus
+                                                    </button>
+
+                                                  </form>
+                                                </div>
+
+                                              </div>
+
+                            </div>
+                          </div>
+
+                          <% }) %>
+
+                            <% } else { %>
+
+                              <div class="text-muted text-center">
+                                Belum ada postingan.
+                              </div>
+
+                              <% } %>
+
+
+
                     </div>
+
 
                     <!-- Settings -->
                     <div class="tab-pane" id="settings">
                       <div class="text-center">
                         <p>Kelola akun dan informasi pribadi Anda.</p>
-                        <a href="/user/settings" class="btn btn-primary">
+                        <a class="btn btn-primary">
                           Buka Pengaturan
                         </a>
                       </div>
@@ -212,7 +461,6 @@
     All rights reserved.
   </div>
 </footer>
-
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1">
@@ -338,8 +586,26 @@
   </div>
 </div>
 
+<!-- Light box post preview modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-body text-center p-0">
+        <img id="lightboxImage" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Preview Photo
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("preview-image")) {
+      document.getElementById("lightboxImage").src = e.target.src;
+      $('#lightboxModal').modal('show');
+    }
+  });
+
+
   document.getElementById('photoInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
@@ -347,4 +613,19 @@
     }
   });
 
+
+  function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diff = Math.floor((now - past) / 1000);
+
+    if (diff < 60) return diff + " detik lalu"; if (diff < 3600) return Math.floor(diff / 60) + " menit lalu"; if (diff <
+      86400) return Math.floor(diff / 3600) + " jam lalu"; if (diff < 2592000) return Math.floor(diff / 86400)
+        + " hari lalu"; if (diff < 31536000) return Math.floor(diff / 2592000) + " bulan lalu"; return Math.floor(diff /
+          31536000) + " tahun lalu";
+  } document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".time-ago").forEach(el => {
+      el.innerText = timeAgo(el.dataset.time);
+    });
+  });
 </script>

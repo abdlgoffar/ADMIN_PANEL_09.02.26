@@ -9,6 +9,7 @@ import {
   Post,
   Res,
   BadRequestException,
+  Param,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,13 +24,16 @@ import { Roles } from '../auth/guards/roles.decorator';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 
 import sharp from 'sharp';
+import { PostService } from '../posts/post.service';
 
 @Controller('web-user')
 @UseGuards(WebAuthGuard, RolesGuard)
 @Roles(UserRole.USER)
 export class UserWebController {
-  constructor(private readonly usersService: UsersService) {}
-
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly postService: PostService,
+  ) {}
   @Post('update/profile')
   @UseInterceptors(
     FileInterceptor('photo', {
@@ -71,6 +75,19 @@ export class UserWebController {
     }
 
     await this.usersService.updateUserProfile(userId, dto, file);
+
+    return res.redirect('/user');
+  }
+
+  @Post('delete-post/:id')
+  async deletePost(
+    @Param('id') id: number,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const userId = (req as any).user.id;
+
+    await this.postService.removeWeb(id, userId);
 
     return res.redirect('/user');
   }
