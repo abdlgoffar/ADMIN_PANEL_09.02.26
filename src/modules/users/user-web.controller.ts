@@ -10,9 +10,10 @@ import {
   Res,
   BadRequestException,
   Param,
+  UploadedFiles,
 } from '@nestjs/common';
 
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Request, Response } from 'express';
 
@@ -25,6 +26,7 @@ import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 
 import sharp from 'sharp';
 import { PostService } from '../posts/post.service';
+import { CreatePostDto } from '../posts/dto/create-post.dto';
 
 @Controller('web-user')
 @UseGuards(WebAuthGuard, RolesGuard)
@@ -88,6 +90,32 @@ export class UserWebController {
     const userId = (req as any).user.id;
 
     await this.postService.removeWeb(id, userId);
+
+    return res.redirect('/user');
+  }
+
+  @Post('create-post')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async createPost(
+    @Req() req: Request,
+    @Body() dto: CreatePostDto,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Res() res: Response,
+  ) {
+    const userId = (req as any).user.id;
+
+    const uploadedFiles = files ?? [];
+
+    if (!dto.paragraph && uploadedFiles.length === 0) {
+      return res.redirect('/user');
+    }
+
+    await this.postService.createWithImages(dto, uploadedFiles, userId);
 
     return res.redirect('/user');
   }

@@ -26,6 +26,72 @@ export class UsersService {
     private readonly profileRepository: Repository<UserProfile>,
   ) {}
 
+  async findAllWithProfile(options: {
+    page: number;
+    limit: number;
+    search?: string;
+    role?: string;
+    gender?: string;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+  }) {
+    const {
+      page = 1,
+      limit = 5,
+      search,
+      role,
+      gender,
+      sortBy = 'user.id',
+      sortOrder,
+    } = options;
+
+    const qb = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.profile', 'profile');
+
+    if (search) {
+      qb.andWhere(
+        `(user.username LIKE :search OR profile.full_name LIKE :search)`,
+        { search: `%${search}%` },
+      );
+    }
+
+    if (role) {
+      qb.andWhere('user.role = :role', { role });
+    }
+
+    if (gender) {
+      qb.andWhere('profile.gender = :gender', { gender });
+    }
+
+    const allowedSortColumns = [
+      'user.id',
+      'user.username',
+      'profile.full_name',
+    ];
+
+    const safeSortBy = allowedSortColumns.includes(sortBy) ? sortBy : 'user.id';
+
+    const safeSortOrder: 'ASC' | 'DESC' =
+      sortOrder === 'ASC' || sortOrder === 'DESC' ? sortOrder : 'DESC';
+
+    qb.orderBy(safeSortBy, safeSortOrder);
+
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    const lastPage = Math.ceil(total / limit) || 1;
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      lastPage,
+    };
+  }
+
   private s3 = new S3Client({
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,

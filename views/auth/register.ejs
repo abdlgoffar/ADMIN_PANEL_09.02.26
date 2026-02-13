@@ -5,126 +5,174 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register Modern</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
+      background: linear-gradient(135deg, #f0f2f5, #e4e6eb);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     .register-container {
-      margin: 20px;
-      background: #fff;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      width: 450px;
+      background: #ffffff;
+      padding: 45px;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .register-container h2 {
       text-align: center;
-      margin-bottom: 25px;
-      color: #333;
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #1c1e21;
     }
 
     .form-control {
       width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: all 0.3s ease;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      border: 1px solid #dddfe2;
+      font-size: 15px;
+      background: #f5f6f7;
+      transition: 0.3s;
     }
 
     .form-control:focus {
-      border-color: #6b73ff;
-      box-shadow: 0 0 8px rgba(107, 115, 255, 0.3);
+      background: #fff;
+      border-color: #1877f2;
+      box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
       outline: none;
     }
 
-    .dob-group {
-      margin-bottom: 20px;
-    }
-
-    .dob-group label {
+    .section-label {
       font-size: 14px;
       font-weight: 600;
-      display: block;
       margin-bottom: 8px;
+      display: block;
+      color: #606770;
     }
 
     .dob-selects {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .dob-selects select {
       flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #dddfe2;
+      background: #f5f6f7;
       font-size: 14px;
+      transition: 0.3s;
     }
 
-    .gender-group {
-      margin-bottom: 20px;
+    .dob-selects select:focus {
+      background: #fff;
+      border-color: #1877f2;
+      box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+      outline: none;
     }
 
-    .gender-group label {
-      font-size: 14px;
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-    }
-
+    /* Gender Buttons */
     .gender-options {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .gender-options label {
       flex: 1;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 8px;
+      border: 1px solid #dddfe2;
+      border-radius: 12px;
+      padding: 12px;
       text-align: center;
       cursor: pointer;
       font-size: 14px;
+      transition: 0.3s;
+      background: #f5f6f7;
     }
 
     .gender-options input {
-      margin-left: 6px;
+      display: none;
+    }
+
+    .gender-options input:checked+span {
+      color: #1877f2;
+      font-weight: 600;
+    }
+
+    .gender-options input:checked+span::before {
+      background: #1877f2;
+    }
+
+    .gender-options span {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .gender-options span::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ccc;
+      transition: 0.3s;
     }
 
     .btn-register {
       width: 100%;
-      padding: 12px;
-      background: #6b73ff;
+      padding: 14px;
+      border-radius: 12px;
       border: none;
-      border-radius: 8px;
-      color: white;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      background: linear-gradient(135deg, #1877f2, #4267B2);
+      color: white;
+      transition: 0.3s;
     }
 
     .btn-register:hover {
-      background: #000dff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(24, 119, 242, 0.3);
     }
 
     .login-link {
-      text-align: right;
-      font-size: 14px;
-      color: #6b73ff;
-      text-decoration: none;
       display: block;
-      margin-top: -15px;
-      margin-bottom: 15px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 18px;
+      color: #1877f2;
+      text-decoration: none;
     }
 
     .login-link:hover {
@@ -134,77 +182,66 @@
 </head>
 
 <body>
+
   <form class="register-container" method="POST" action="/web-auth/register">
-    <h2>Buat Akun Baru</h2>
-
     <input name="username" class="form-control" placeholder="Username" required />
-
     <input name="password" type="password" class="form-control" placeholder="Password" required />
-
-    <input name="full_name" type="text" class="form-control" placeholder="Full name" required />
+    <input name="full_name" class="form-control" placeholder="Full name" required />
 
     <input type="hidden" name="date_of_birth" id="date_of_birth" />
 
+    <label class="section-label">Date of birth</label>
+    <div class="dob-selects">
+      <select name="day" required>
+        <option value="">Day</option>
+        <script>
+          for (let i = 1; i <= 31; i++) {
+            document.write(`<option value="${i}">${i}</option>`);
+          }
+        </script>
+      </select>
 
-    <!-- DATE OF BIRTH -->
-    <div class="dob-group">
-      <label>Date of birth</label>
-      <div class="dob-selects">
-        <select name="day" required>
-          <option value="">Day</option>
-          <!-- 1-31 -->
-          <script>
-            for (let i = 1; i <= 31; i++) {
-              document.write(`<option value="${i}">${i}</option>`);
-            }
-          </script>
-        </select>
+      <select name="month" required>
+        <option value="">Month</option>
+        <option value="01">Jan</option>
+        <option value="02">Feb</option>
+        <option value="03">Mar</option>
+        <option value="04">Apr</option>
+        <option value="05">May</option>
+        <option value="06">Jun</option>
+        <option value="07">Jul</option>
+        <option value="08">Aug</option>
+        <option value="09">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
+      </select>
 
-        <select name="month" required>
-          <option value="">Month</option>
-          <option value="01">Jan</option>
-          <option value="02">Feb</option>
-          <option value="03">Mar</option>
-          <option value="04">Apr</option>
-          <option value="05">May</option>
-          <option value="06">Jun</option>
-          <option value="07">Jul</option>
-          <option value="08">Aug</option>
-          <option value="09">Sep</option>
-          <option value="10">Oct</option>
-          <option value="11">Nov</option>
-          <option value="12">Dec</option>
-        </select>
-
-        <select name="year" required>
-          <option value="">Year</option>
-          <script>
-            const currentYear = new Date().getFullYear();
-            for (let y = currentYear; y >= 1950; y--) {
-              document.write(`<option value="${y}">${y}</option>`);
-            }
-          </script>
-        </select>
-
-
-      </div>
+      <select name="year" required>
+        <option value="">Year</option>
+        <script>
+          const currentYear = new Date().getFullYear();
+          for (let y = currentYear; y >= 1950; y--) {
+            document.write(`<option value="${y}">${y}</option>`);
+          }
+        </script>
+      </select>
     </div>
 
-    <!-- GENDER -->
-    <div class="gender-group">
-      <label>Gender</label>
-      <div class="gender-options">
-        <label>
-          Female <input type="radio" name="gender" value="female" required />
-        </label>
+    <label class="section-label">Gender</label>
+    <div class="gender-options">
+      <label>
+        <input type="radio" name="gender" value="female" required />
+        <span>Female</span>
+      </label>
 
-        <label>
-          Male <input type="radio" name="gender" value="male" />
-        </label>
-      </div>
+      <label>
+        <input type="radio" name="gender" value="male" />
+        <span>Male</span>
+      </label>
     </div>
 
-    <a href="/auth/login" class="login-link"> Sudah punya akun? Login </a>
+    <a href="/auth/login" class="login-link">Sudah punya akun? Login</a>
 
     <button type="submit" class="btn-register">Register</button>
   </form>
@@ -229,7 +266,6 @@
       }
 
       const dob = `${year}-${month}-${day.padStart(2, "0")}`;
-
       document.getElementById("date_of_birth").value = dob;
 
       daySelect.removeAttribute("name");
@@ -237,7 +273,6 @@
       yearSelect.removeAttribute("name");
     });
   </script>
-
 
 </body>
 

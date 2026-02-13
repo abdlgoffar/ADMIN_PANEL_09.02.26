@@ -1,0 +1,205 @@
+<div class="card card-outline card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Users Management</h3>
+    </div>
+
+    <div class="card-body">
+
+        <!-- FILTER -->
+        <form method="GET" action="/admin/users" id="filterForm">
+            <div class="row mb-3 align-items-end">
+
+                <!-- Role -->
+                <div class="col-12 col-md-3 mb-2 mb-md-0">
+                    <select name="role" class="form-control filter-select" onchange="this.form.submit()">
+                        <option value="">All Roles</option>
+                        <option value="admin" <%=query.role==='admin' ?'selected':'' %>>Admin</option>
+                        <option value="user" <%=query.role==='user' ?'selected':'' %>>User</option>
+                    </select>
+                </div>
+
+                <!-- Gender -->
+                <div class="col-12 col-md-3 mb-2 mb-md-0">
+                    <select name="gender" class="form-control filter-select" onchange="this.form.submit()">
+                        <option value="">All Gender</option>
+                        <option value="male" <%=query.gender==='male' ?'selected':'' %>>Male</option>
+                        <option value="female" <%=query.gender==='female' ?'selected':'' %>>Female</option>
+                    </select>
+                </div>
+
+                <!-- Search (Sebelah kanan & full width di mobile) -->
+                <div class="col-12 col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="search" value="<%= query.search || '' %>" class="form-control"
+                            placeholder="Search...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table id="usersTable" class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Photo</th>
+                        <th>
+                            <a href="?sortBy=user.username&sortOrder=<%= query.sortOrder==='ASC'?'DESC':'ASC' %>">
+                                Username
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sortBy=profile.full_name&sortOrder=<%= query.sortOrder==='ASC'?'DESC':'ASC' %>">
+                                Full Name
+                            </a>
+                        </th>
+                        <th>Gender</th>
+                        <th>Education</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((user, index)=> { %>
+                        <tr>
+                            <td>
+                                <%= index + 1 %>
+                            </td>
+
+                            <td>
+                                <img src="<%= user.profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
+                                    width="40" height="40" class="img-circle" style="object-fit:cover;">
+                            </td>
+
+                            <td><strong>
+                                    <%= user.username %>
+                                </strong></td>
+
+                            <td>
+                                <%= user.profile?.full_name || '-' %>
+                            </td>
+
+                            <td>
+                                <% if(user.profile?.gender==='male' ){ %>
+                                    <span class="badge badge-info">Male</span>
+                                    <% } else if(user.profile?.gender==='female' ){ %>
+                                        <span class="badge badge-pink" style="background:#e83e8c;">Female</span>
+                                        <% } else { %>
+                                            <span class="badge badge-secondary">-</span>
+                                            <% } %>
+                            </td>
+
+                            <td>
+                                <%= user.profile?.education ? user.profile.education : `Pengguna
+                                    ${user.profile?.full_name || user.username} belum mengisinya` %>
+                            </td>
+
+                            <td>
+                                <% if(user.role==='admin' ){ %>
+                                    <span class="badge badge-secondary">Admin</span>
+                                    <% } else { %>
+                                        <span class="badge badge-secondary">User</span>
+                                        <% } %>
+                            </td>
+
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="/admin/users/<%= user.id %>" class="btn btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/admin/users/edit/<%= user.id %>" class="btn " style="background:#e83e8c;">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="/admin/users/delete/<%= user.id %>" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-3 gap-2">
+
+                <!-- LEFT SIDE -->
+                <div class="d-flex align-items-center gap-3">
+
+                    <form method="GET" action="/admin/users" class="d-flex align-items-center mb-0">
+
+                        <!-- Preserve Filters -->
+                        <input type="hidden" name="search" value="<%= query.search || '' %>">
+                        <input type="hidden" name="role" value="<%= query.role || '' %>">
+                        <input type="hidden" name="gender" value="<%= query.gender || '' %>">
+                        <input type="hidden" name="sortBy" value="<%= query.sortBy || '' %>">
+                        <input type="hidden" name="sortOrder" value="<%= query.sortOrder || '' %>">
+
+
+                        <select name="limit" class="form-control form-control-sm mr-2" onchange="this.form.submit()"
+                            style="width:90px; border-radius:8px;">
+                            <option value="3" <%=pagination.limit==3?'selected':'' %>>3</option>
+                            <option value="5" <%=pagination.limit==5?'selected':'' %>>5</option>
+                            <option value="10" <%=pagination.limit==10?'selected':'' %>>10</option>
+                            <option value="20" <%=pagination.limit==20?'selected':'' %>>20</option>
+                        </select>
+
+                    </form>
+
+                    <!-- Info Text -->
+                    <small class="text-muted">
+                        Showing
+                        <%= ((pagination.page - 1) * pagination.limit) + 1 %>
+                            to
+                            <%= Math.min(pagination.page * pagination.limit, pagination.total) %>
+                                of
+                                <%= pagination.total %> entries
+                    </small>
+
+                </div>
+
+                <!-- RIGHT SIDE (Pagination tetap di sini) -->
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <% for(let i=1; i<=pagination.lastPage; i++){ %>
+                            <li class="page-item <%= pagination.page===i?'active':'' %>">
+                                <a class="page-link"
+                                    href="?page=<%= i %>&limit=<%= pagination.limit %>&search=<%= query.search||'' %>&role=<%= query.role||'' %>&gender=<%= query.gender||'' %>&sortBy=<%= query.sortBy||'' %>&sortOrder=<%= query.sortOrder||'' %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $(function () {
+
+            $('.filter-select').on('change', function () {
+                $('#filterForm').submit();
+            });
+
+            $('#usersTable').DataTable({
+                responsive: true,
+                autoWidth: false,
+                columnDefs: [
+                    { responsivePriority: 1, targets: 2 }, // Username
+                    { responsivePriority: 2, targets: 7 }, // Action
+                    { responsivePriority: 3, targets: 3 }, // Full Name
+                    { responsivePriority: 4, targets: 6 }, // Role
+                    { responsivePriority: 10001, targets: 1 } // Photo (hide first)
+                ]
+            });
+
+        });
+    </script>

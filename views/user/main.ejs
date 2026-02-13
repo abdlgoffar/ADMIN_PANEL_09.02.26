@@ -1,21 +1,30 @@
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+<nav class="main-header navbar navbar-expand-md navbar-light bg-white shadow-sm">
   <div class="container">
-    <a href="/user" class="navbar-brand">
-      <span class="brand-text font-weight-light">Faceelook</span>
+
+    <!-- Brand -->
+    <a href="/user" class="navbar-brand font-weight-bold">
+      Faceelook
     </a>
 
-    <div class="collapse navbar-collapse order-3">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </a>
-        </li>
-      </ul>
+    <!-- Right Side -->
+    <div class="ml-auto d-flex align-items-center">
+
+      <form action="/web-auth/logout" method="POST" onsubmit="return confirm('Yakin ingin keluar aplikasi?')"
+        class="mb-0">
+
+        <button style="border-width: 0px;" type="submit" class="btn btn-outline-danger btn-sm">
+          <i class="fas fa-sign-out-alt mr-1"></i>
+          Logout
+        </button>
+
+      </form>
+
     </div>
+
   </div>
 </nav>
+
 
 <div class="content-wrapper">
   <div class="content pt-4">
@@ -119,25 +128,39 @@
             <!-- RIGHT SIDE -->
             <div class="col-md-9">
               <div class="card">
-                <div class="card-header p-2">
-                  <ul class="nav nav-pills">
+                <div class="card-header position-relative p-2">
+
+                  <!-- LEFT SIDE (Tabs) -->
+                  <ul class="nav nav-pills m-0">
                     <li class="nav-item">
                       <a class="nav-link active" href="#activity" data-toggle="tab">
-                        Aktivitas & Social Feed
+                        Feed utama
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="#posts" data-toggle="tab">
-                        Postingan Saya
+                        Postingan
                       </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="#settings" data-toggle="tab">
-                        Settings
+                        Pengaturan
                       </a>
                     </li>
                   </ul>
+
+                  <!-- RIGHT SIDE (More Vert Dropdown) -->
+                  <div class="dropdown position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);">
+                    <a class="text-dark" href="#" role="button" id="dropdownMenu" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false" style="font-size: 20px;">
+                      &#8942;
+                    </a>
+
+
+                  </div>
+
                 </div>
+
 
                 <div class="card-body">
                   <div class="tab-content">
@@ -248,14 +271,11 @@
 
                                                 <!-- RIGHT SIDE -->
                                                 <div>
-                                                  <form method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus postingan ini?')">
 
-                                                    <button class="btn btn-default btn-sm">
-                                                      <i class="fas fa-share"></i> Share
-                                                    </button>
+                                                  <a class="btn btn-default btn-sm">
+                                                    <i class="fas fa-share"></i> Share
+                                                  </a>
 
-                                                  </form>
                                                 </div>
 
                                               </div>
@@ -266,9 +286,13 @@
 
                             <% } else { %>
 
+
                               <div class="alert alert-info">
-                                Medsos belum memiliki aktivitas sama sekali.
-                              </div <% } %>
+                                Belum ada aktivitas sama sekali.
+                              </div>
+
+                              <% } %>
+
 
 
 
@@ -280,21 +304,36 @@
                     <div class="tab-pane" id="posts">
 
 
-                      <div class="d-flex align-items-center mb-3">
+                      <form action="/web-user/create-post" method="POST"
+                        onsubmit="return confirm('Yakin ingin mengirim postingan ini?')">
 
-                        <!-- Avatar -->
-                        <img src="<%= profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
-                          class="img-circle" width="40" height="40" />
+                        <div class="d-flex align-items-center mb-3">
 
-                        <!-- Input -->
-                        <input type="text" class="form-control ml-2" placeholder="Apa yang Anda pikirkan hari ini?" />
+                          <!-- Avatar -->
+                          <img
+                            src="<%= profile?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>"
+                            class="img-circle" width="40" height="40" />
 
-                        <!-- Add Button -->
-                        <button class="btn btn-primary ml-2" type="button">
-                          <i class="fas fa-plus"></i>
-                        </button>
+                          <!-- Input -->
+                          <input type="text" id="postInput" name="paragraph" class="form-control ml-2"
+                            placeholder="Apa yang anda pikirkan hari Ini?" />
 
-                      </div>
+                          <!-- Add Button -->
+                          <button id="addBtn" class="btn btn-primary ml-2" type="button">
+                            <i class="fas fa-plus"></i>
+                          </button>
+                          <!-- Hidden File Input -->
+                          <input type="file" id="fileInput" accept="image/*" multiple hidden>
+
+                          <!-- Send Button (submit form) -->
+                          <button id="sendBtn" class="btn btn-primary ml-2 d-none" type="submit">
+                            <i class="fas fa-paper-plane"></i>
+                          </button>
+
+                        </div>
+
+                      </form>
+
 
 
                       <% if (myPost && myPost.length> 0) { %>
@@ -433,9 +472,7 @@
                     <div class="tab-pane" id="settings">
                       <div class="text-center">
                         <p>Kelola akun dan informasi pribadi Anda.</p>
-                        <a class="btn btn-primary">
-                          Buka Pengaturan
-                        </a>
+
                       </div>
                     </div>
 
@@ -586,6 +623,65 @@
   </div>
 </div>
 
+
+<!-- Upload Post Images Modal -->
+<div class="modal fade" id="uploadPostModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Buat Postingan</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <form action="/web-user/create-post" method="POST" enctype="multipart/form-data"
+        onsubmit="return confirm('Yakin ingin mengirim postingan ini?')">
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Pilih Gambar</label>
+            <input type="file" name="images" id="imageInput" class="form-control" accept="image/*" multiple />
+            <small class="text-muted">
+              Bisa pilih lebih dari satu gambar
+            </small>
+          </div>
+
+          <!-- Preview Area -->
+          <div class="row mt-3" id="previewContainer">
+            <!-- Image preview akan muncul di sini -->
+          </div>
+
+          <!-- Caption -->
+          <div class="form-group mt-3 d-none" id="captionContainer">
+            <label>Caption</label>
+            <textarea name="paragraph" id="captionInput" class="form-control" rows="3"
+              placeholder="Tulis caption untuk postingan Anda..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" id="uploadBtn" class="btn btn-primary" disabled>
+            Upload
+          </button>
+
+        </div>
+
+      </form>
+      <!-- END FORM -->
+
+    </div>
+  </div>
+</div>
+
+
+
 <!-- Light box post preview modal -->
 <div class="modal fade" id="lightboxModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -628,4 +724,118 @@
       el.innerText = timeAgo(el.dataset.time);
     });
   });
+
+  const input = document.getElementById("postInput");
+  const addBtn = document.getElementById("addBtn");
+  const sendBtn = document.getElementById("sendBtn");
+
+  function updateButtonState() {
+    const isFocused = document.activeElement === input;
+    const isLongEnough = input.value.length > 3;
+
+    if (isFocused || isLongEnough) {
+      addBtn.classList.add("d-none");
+      sendBtn.classList.remove("d-none");
+    } else {
+      addBtn.classList.remove("d-none");
+      sendBtn.classList.add("d-none");
+    }
+  }
+
+  input.addEventListener("focus", updateButtonState);
+  input.addEventListener("blur", updateButtonState);
+  input.addEventListener("input", updateButtonState);
+
+
+
+</script>
+
+
+
+<script>
+  const imageInput = document.getElementById("imageInput");
+  const previewContainer = document.getElementById("previewContainer");
+  const captionContainer = document.getElementById("captionContainer");
+
+  // Buka modal
+  document.getElementById("addBtn").addEventListener("click", function () {
+    $("#uploadPostModal").modal("show");
+  });
+
+  imageInput.addEventListener("change", function () {
+
+    previewContainer.innerHTML = "";
+
+    const files = this.files;
+
+    if (files.length > 0) {
+      captionContainer.classList.remove("d-none"); // tampilkan caption
+
+      Array.from(files).forEach(file => {
+
+        if (!file.type.startsWith("image/")) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const col = document.createElement("div");
+          col.className = "col-md-3 mb-3";
+
+          col.innerHTML = `
+            <div class="position-relative">
+              <img src="${e.target.result}" 
+                   class="img-fluid rounded shadow"
+                   style="height:150px; object-fit:cover; width:100%;" />
+
+              <button type="button"
+                      class="btn btn-danger btn-sm position-absolute"
+                      style="top:5px; right:5px;"
+                      onclick="removeImage(this)">
+                &times;
+              </button>
+            </div>
+          `;
+
+          previewContainer.appendChild(col);
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+    } else {
+      captionContainer.classList.add("d-none");
+    }
+  });
+
+  function removeImage(button) {
+    button.closest(".col-md-3").remove();
+
+    if (previewContainer.children.length === 0) {
+      captionContainer.classList.add("d-none");
+      imageInput.value = "";
+    }
+  }
+
+  const captionInput = document.getElementById("captionInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+
+  function checkForm() {
+    const hasImage = imageInput.files.length > 0;
+    const hasCaption = captionInput.value.trim().length > 0;
+
+    if (!hasImage && !hasCaption) {
+      uploadBtn.disabled = true;
+      uploadBtn.classList.add("btn-secondary");
+      uploadBtn.classList.remove("btn-primary");
+    } else {
+      uploadBtn.disabled = false;
+      uploadBtn.classList.add("btn-primary");
+      uploadBtn.classList.remove("btn-secondary");
+    }
+  }
+
+  imageInput.addEventListener("change", checkForm);
+  captionInput.addEventListener("input", checkForm);
+
+  document.addEventListener("DOMContentLoaded", checkForm);
 </script>

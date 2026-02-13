@@ -1,3 +1,4 @@
+import { AdminWebController } from './modules/users/admin-web.controller';
 import { UserWebController } from './modules/users/user-web.controller';
 import { AdminWebViewController } from './modules/users/admin-web-view.controller';
 import { UserWebViewController } from './modules/users/user-web-view.controller';
@@ -59,6 +60,7 @@ import { UserController } from './modules/users/user.controller';
   ],
 
   controllers: [
+    AdminWebController,
     UserWebController,
     AuthWebViewController,
     AdminWebViewController,

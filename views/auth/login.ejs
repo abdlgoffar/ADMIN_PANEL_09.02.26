@@ -1,103 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Modern</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Modern</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f2f5, #e4e6eb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 45px;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
       }
 
-      .login-container {
-        background: #fff;
-        padding: 40px;
-        margin-top: 90px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        width: 450px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      .login-container h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #333;
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #1c1e21;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #dddfe2;
+      font-size: 15px;
+      background: #f5f6f7;
+      transition: 0.3s;
+    }
+
+    .form-control:focus {
+      background: #fff;
+      border-color: #1877f2;
+      box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+      outline: none;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 13px;
+      color: #1877f2;
+      user-select: none;
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      font-size: 14px;
+      margin-bottom: 18px;
+      color: #1877f2;
+      text-decoration: none;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #1877f2, #4267B2);
+      color: white;
+      transition: 0.3s;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(24, 119, 242, 0.3);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <form class="login-container" method="POST" action="/web-auth/login">
+
+    <div class="form-group">
+      <input name="username" class="form-control" placeholder="Username" required />
+    </div>
+
+    <div class="form-group">
+      <input id="password" name="password" type="password" class="form-control" placeholder="Password" required />
+      <span class="toggle-password" onclick="togglePassword()">Show</span>
+    </div>
+
+    <a href="/auth/register" class="forgot-password">
+      Buat akun baru? Register
+    </a>
+
+    <button type="submit" class="btn-login">Login</button>
+
+  </form>
+
+  <script>
+    function togglePassword() {
+      const passwordInput = document.getElementById("password");
+      const toggle = document.querySelector(".toggle-password");
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggle.textContent = "Hide";
+      } else {
+        passwordInput.type = "password";
+        toggle.textContent = "Show";
       }
+    }
+  </script>
 
-      .form-control {
-        width: 100%;
-        padding: 12px 15px;
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 16px;
-        transition: all 0.3s ease;
-      }
+</body>
 
-      .form-control:focus {
-        border-color: #6b73ff;
-        box-shadow: 0 0 8px rgba(107, 115, 255, 0.3);
-        outline: none;
-      }
-
-      .btn-login {
-        width: 100%;
-        padding: 12px;
-        background: #6b73ff;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-
-      .btn-login:hover {
-        background: #000dff;
-      }
-
-      .forgot-password {
-        text-align: right;
-        font-size: 14px;
-        color: #6b73ff;
-        text-decoration: none;
-        display: block;
-        margin-top: -15px;
-        margin-bottom: 15px;
-      }
-
-      .forgot-password:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <form class="login-container" method="POST" action="/web-auth/login">
-      <h2>Silahkan Login !</h2>
-      <input
-        name="username"
-        class="form-control"
-        placeholder="Username"
-        required
-      />
-      <input
-        name="password"
-        type="password"
-        class="form-control"
-        placeholder="Password"
-        required
-      />
-      <a href="/auth/register" class="forgot-password"
-        >Buat akun baru? Register</a
-      >
-
-      <button type="submit" class="btn-login">Login</button>
-    </form>
-  </body>
 </html>
